@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {FormBuilder, UntypedFormGroup} from '@angular/forms';
-import {BackendConnectorService} from '../../../services/backend-connectors/backend-connector.service';
-import {AppUser} from '../../../domain/appUser.type';
+import {BackendConnectorService} from '../../services/backend-connectors/backend-connector.service';
+import {AppUser} from '../../domain/appUser.type';
 import {take} from 'rxjs';
 
 const INIT_FORM = {username: '', password: ''}

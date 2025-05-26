@@ -20,4 +20,9 @@ export class BackendConnectorService {
   public loginAppUser(user: AppUser): Observable<any> {
     return this.requestUtils.post(`${this.USER_CONTROLLER}/login`, user);
   }
+
+  public getSearchResult(search: string, countryID: string): Observable<any> {
+    return this.requestUtils.get<any>(this.APP_CONTROLLER, `getLocationData/${search}/${countryID}`);
+  }
+
 }

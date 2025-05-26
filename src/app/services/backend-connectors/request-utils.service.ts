@@ -9,8 +9,12 @@ export class RequestUtilsService {
 
   constructor(private http: HttpClient) { }
 
-  get<T>(endpoint: string, params?: HttpParams): Observable<T> {
-    return this.http.get<T>(`${this.API_URL}/${endpoint}`, { params });
+  get<T>(endpoint: string, pseudoParams?: string): Observable<T> {
+    if(pseudoParams){
+      return this.http.get<T>(`${this.API_URL}/${endpoint}/${pseudoParams}`, { withCredentials: true });
+    }
+    return this.http.get<T>(`${this.API_URL}/${endpoint}`, { withCredentials: true });
+
   }
 
   post<T, B = any>(endpoint: string, body: B): Observable<T> {
