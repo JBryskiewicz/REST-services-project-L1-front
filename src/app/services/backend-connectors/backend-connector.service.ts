@@ -18,7 +18,8 @@ export class BackendConnectorService {
   }
 
   public loginAppUser(user: AppUser): Observable<any> {
-    return this.requestUtils.post(`${this.USER_CONTROLLER}/login`, user);
+    const loginData = {username: user.email, password: user.password};
+    return this.requestUtils.post(`${this.USER_CONTROLLER}/generateToken`, loginData);
   }
 
   public getSearchResult(search: string, countryID: string): Observable<any> {

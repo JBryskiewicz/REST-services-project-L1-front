@@ -3,8 +3,15 @@ import {FormBuilder, UntypedFormGroup} from '@angular/forms';
 import {BackendConnectorService} from '../../services/backend-connectors/backend-connector.service';
 import {AppUser} from '../../domain/appUser.type';
 import {take} from 'rxjs';
+import {Router} from '@angular/router';
 
-const INIT_FORM = {username: '', password: ''}
+const INIT_FORM = {
+  username: '',
+  email: '',
+  password: ''
+}
+
+const TOKEN_KEY = 'jwtToken';
 
 @Component({
   selector: 'app-landing-page',
@@ -19,6 +26,7 @@ export class LandingPageComponent {
   protected isLoginMode: boolean = true;
 
   constructor(
+    private router: Router,
     private formBuilder: FormBuilder,
     private backendConnector: BackendConnectorService,
   ) {
@@ -36,20 +44,27 @@ export class LandingPageComponent {
   }
 
   private loginAction(): void {
-    const {username, password} = this.loginForm.value;
-    this.backendConnector.loginAppUser({username, password} as AppUser)
+    const {email, username, password} = this.loginForm.value;
+    this.backendConnector.loginAppUser({email, username, password} as AppUser)
       .pipe(take(1))
-      .subscribe((response) => {
-        console.log(response);
-      })
+      .subscribe({
+        next: (response: string) => {
+          localStorage.setItem(TOKEN_KEY, response);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          console.error('Login failed', error);
+          // temp code, should add remove from storage if token expired.
+        }
+      });
   }
 
   private registerAction(): void {
-    const {username, password} = this.loginForm.value;
-    this.backendConnector.registerAppUser({username, password} as AppUser)
+    const {email, username, password} = this.loginForm.value;
+    this.backendConnector.registerAppUser({email, username, password} as AppUser)
       .pipe(take(1))
-      .subscribe((response) => {
-        console.log(response);
+      .subscribe(() => {
+        this.isLoginMode = true;
       })
   }
 }

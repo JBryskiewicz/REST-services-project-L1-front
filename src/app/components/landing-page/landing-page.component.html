@@ -5,13 +5,22 @@
 
     <div class="login-view__form-inputs">
       <form [formGroup]="loginForm">
-        <mat-form-field [style]="'width: 100%;'" appearance="outline">
-          <mat-label>{{ isLoginMode ? 'Login' : 'Username' }}</mat-label>
+        <mat-form-field *ngIf="!isLoginMode" [style]="'width: 100%;'" appearance="outline">
+          <mat-label>Username</mat-label>
           <input
             matInput
             type="text"
             placeholder="Username"
             formControlName="username"
+          >
+        </mat-form-field>
+        <mat-form-field [style]="'width: 100%;'" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            type="email"
+            placeholder="Email"
+            formControlName="email"
           >
         </mat-form-field>
         <mat-form-field [style]="'width: 100%;'" appearance="outline">
