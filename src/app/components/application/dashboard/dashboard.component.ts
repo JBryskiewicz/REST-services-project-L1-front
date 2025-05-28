@@ -104,6 +104,11 @@ export class DashboardComponent {
   }
 
   protected loadView(): void {
-    // open dialog with list to pick from
+    // open mat-dialog with list to pick from
+    // in dialog send request for user's "destinations"
+    // display them
+    // add for each button "load" & "delete"
+    // on click close dialog and display data from selected view
+    // this.userDestinationList = what was loaded from dialog.
   }
 }

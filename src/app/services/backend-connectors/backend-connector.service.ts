@@ -26,4 +26,8 @@ export class BackendConnectorService {
     return this.requestUtils.get<any>(this.APP_CONTROLLER, `getLocationData/${search}/${countryID}`);
   }
 
+  //save -> post (body)
+  //load -> get
+  //delete -> delete
+
 }

@@ -10,3 +10,7 @@ export interface Destination {
   sunrise: number,
   sunset: number,
 }
+
+export interface UserDestinationView {
+  // implement
+}
