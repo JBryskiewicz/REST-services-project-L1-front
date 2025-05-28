@@ -3,6 +3,8 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {BackendConnectorService} from '../../../services/backend-connectors/backend-connector.service';
 import {take} from 'rxjs';
 import {Destination} from '../../../domain/appDestination.type';
+import {TOKEN_KEY} from '../../landing-page/landing-page.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'dashboard',
@@ -15,6 +17,8 @@ export class DashboardComponent {
     search: new FormControl(''),
     country: new FormControl(''),
   });
+
+  protected isLoggedIn: boolean = false;
 
   protected countryIDs = [
     {id: 'gb', name: 'Great Britain'},
@@ -39,7 +43,11 @@ export class DashboardComponent {
 
   protected userDestinationList: Destination[] = [];
 
-  constructor(private backend: BackendConnectorService) {
+  constructor(private backend: BackendConnectorService, private router: Router,) {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      this.isLoggedIn = true;
+    }
   }
 
   protected onSubmit(): void {
@@ -83,5 +91,19 @@ export class DashboardComponent {
     this.userDestinationList = this.userDestinationList.filter(d => {
       return d.city !== destination.city;
     });
+  }
+
+  protected handleLogOut(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    this.router.navigate(['']);
+  }
+
+  protected saveCurrentView(): void {
+    const data = {userId: '', destinations: this.userDestinationList}
+    // Request to backend.
+  }
+
+  protected loadView(): void {
+    // open dialog with list to pick from
   }
 }

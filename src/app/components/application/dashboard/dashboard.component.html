@@ -1,8 +1,15 @@
-<main class="rest-app">
+<ng-container *ngIf="isLoggedIn; else notLoggedIn">
 
-  <section class="rest-app__data-container">
+  <header style="display: flex; justify-content: flex-end; gap: 12px; margin: 16px 16px 0 16px">
+    <button mat-raised-button color="primary" (click)="saveCurrentView()">Save current view</button>
+    <button mat-raised-button color="primary" (click)="saveCurrentView()">Load view</button>
+    <button mat-raised-button color="primary" (click)="handleLogOut()">Logout</button>
+  </header>
 
-    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="rest-app__data-container__search">
+  <main class="rest-app">
+    <section class="rest-app__data-container">
+
+      <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="rest-app__data-container__search">
 
         <mat-form-field appearance="fill">
           <mat-label>Country</mat-label>
@@ -24,99 +31,105 @@
           <span>search</span>
         </button>
 
-    </form>
+      </form>
 
-    <div class="rest-app__data-container__grid">
-      <mat-card class="weather-card" *ngIf="searchResult !== null">
-        <mat-card-title>{{ searchResult!.city }}, {{ searchResult!.country }}</mat-card-title>
-        <mat-card-content>
-          <p>🌡 Temperature: {{ searchResult!.temp }} °C</p>
-          <p>🤒 Feels Like: {{ searchResult!.feels_like }} °C</p>
-          <p>🔽 Pressure: {{ searchResult!.pressure }} hPa</p>
-          <p>🌫 Visibility: {{ searchResult!.visibility }} m</p>
-          <p>💨 Wind Speed: {{ searchResult!.windSpeed }} m/s</p>
-          <p>☁️ Cloud Density: {{ searchResult!.cloudDensity }}%</p>
-          <p>🌅 Sunrise: {{searchResult!.sunrise * 1000 | date:'shortTime'}}</p>
-          <p>🌇 Sunset: {{searchResult!.sunset * 1000 | date:'shortTime'}}</p>
-          <button mat-button color="primary" (click)="addDestinationToList(searchResult)">
-            <span>Add to destination list</span>
-            <mat-icon>add</mat-icon>
-          </button>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-  </section>
-
-  <section class="rest-app__result-container">
-
-    <div class="rest-app__result-container__table">
-      <table mat-table [dataSource]="userDestinationList" class="mat-elevation-z2">
-
-        <ng-container matColumnDef="city">
-          <th mat-header-cell *matHeaderCellDef> City </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.city }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="country">
-          <th mat-header-cell *matHeaderCellDef> Country </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.country }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="temp">
-          <th mat-header-cell *matHeaderCellDef> Temp (°C) </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.temp }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="feels_like">
-          <th mat-header-cell *matHeaderCellDef> Feels Like (°C) </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.feels_like }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="pressure">
-          <th mat-header-cell *matHeaderCellDef> Pressure </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.pressure }} hPa </td>
-        </ng-container>
-
-        <ng-container matColumnDef="windSpeed">
-          <th mat-header-cell *matHeaderCellDef> Wind </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.windSpeed }} m/s </td>
-        </ng-container>
-
-        <ng-container matColumnDef="cloudDensity">
-          <th mat-header-cell *matHeaderCellDef> Clouds </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.cloudDensity }}% </td>
-        </ng-container>
-
-        <ng-container matColumnDef="visibility">
-          <th mat-header-cell *matHeaderCellDef> Visibility </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.visibility }} m </td>
-        </ng-container>
-
-        <ng-container matColumnDef="sunrise">
-          <th mat-header-cell *matHeaderCellDef> Sunrise </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.sunrise * 1000 | date:'shortTime' }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="sunset">
-          <th mat-header-cell *matHeaderCellDef> Sunset </th>
-          <td mat-cell *matCellDef="let dest"> {{ dest.sunset * 1000 | date:'shortTime' }} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef> User Action </th>
-          <td mat-cell *matCellDef="let dest">
-            <button mat-icon-button (click)="removeDestinationFromList(dest)">
-              <mat-icon>delete</mat-icon>
+      <div class="rest-app__data-container__grid">
+        <mat-card class="weather-card" *ngIf="searchResult !== null">
+          <mat-card-title>{{ searchResult!.city }}, {{ searchResult!.country }}</mat-card-title>
+          <mat-card-content>
+            <p>🌡 Temperature: {{ searchResult!.temp }} °C</p>
+            <p>🤒 Feels Like: {{ searchResult!.feels_like }} °C</p>
+            <p>🔽 Pressure: {{ searchResult!.pressure }} hPa</p>
+            <p>🌫 Visibility: {{ searchResult!.visibility }} m</p>
+            <p>💨 Wind Speed: {{ searchResult!.windSpeed }} m/s</p>
+            <p>☁️ Cloud Density: {{ searchResult!.cloudDensity }}%</p>
+            <p>🌅 Sunrise: {{ searchResult!.sunrise * 1000 | date:'shortTime' }}</p>
+            <p>🌇 Sunset: {{ searchResult!.sunset * 1000 | date:'shortTime' }}</p>
+            <button mat-button color="primary" (click)="addDestinationToList(searchResult)">
+              <span>Add to destination list</span>
+              <mat-icon>add</mat-icon>
             </button>
-          </td>
-        </ng-container>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
+    </section>
 
-  </section>
+    <section class="rest-app__result-container">
 
-</main>
+      <div class="rest-app__result-container__table">
+        <table mat-table [dataSource]="userDestinationList" class="mat-elevation-z2">
+
+          <ng-container matColumnDef="city">
+            <th mat-header-cell *matHeaderCellDef> City</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.city }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="country">
+            <th mat-header-cell *matHeaderCellDef> Country</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.country }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="temp">
+            <th mat-header-cell *matHeaderCellDef> Temp (°C)</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.temp }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="feels_like">
+            <th mat-header-cell *matHeaderCellDef> Feels Like (°C)</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.feels_like }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="pressure">
+            <th mat-header-cell *matHeaderCellDef> Pressure</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.pressure }} hPa</td>
+          </ng-container>
+
+          <ng-container matColumnDef="windSpeed">
+            <th mat-header-cell *matHeaderCellDef> Wind</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.windSpeed }} m/s</td>
+          </ng-container>
+
+          <ng-container matColumnDef="cloudDensity">
+            <th mat-header-cell *matHeaderCellDef> Clouds</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.cloudDensity }}%</td>
+          </ng-container>
+
+          <ng-container matColumnDef="visibility">
+            <th mat-header-cell *matHeaderCellDef> Visibility</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.visibility }} m</td>
+          </ng-container>
+
+          <ng-container matColumnDef="sunrise">
+            <th mat-header-cell *matHeaderCellDef> Sunrise</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.sunrise * 1000 | date:'shortTime' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="sunset">
+            <th mat-header-cell *matHeaderCellDef> Sunset</th>
+            <td mat-cell *matCellDef="let dest"> {{ dest.sunset * 1000 | date:'shortTime' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef> User Action</th>
+            <td mat-cell *matCellDef="let dest">
+              <button mat-icon-button (click)="removeDestinationFromList(dest)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+</ng-container>
+
+<ng-template #notLoggedIn>
+  Not logged-in, please login: <a href="/login">login page</a>
+</ng-template>
