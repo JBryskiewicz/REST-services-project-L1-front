@@ -49,7 +49,6 @@ export class DashboardComponent {
       return;
     }
     if (!countryValue || countryValue === '') {
-      console.log(countryValue);
       return;
     }
 

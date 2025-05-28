@@ -11,7 +11,7 @@ const INIT_FORM = {
   password: ''
 }
 
-const TOKEN_KEY = 'jwtToken';
+export const TOKEN_KEY = 'jwtToken';
 
 @Component({
   selector: 'app-landing-page',
@@ -48,8 +48,10 @@ export class LandingPageComponent {
     this.backendConnector.loginAppUser({email, username, password} as AppUser)
       .pipe(take(1))
       .subscribe({
-        next: (response: string) => {
-          localStorage.setItem(TOKEN_KEY, response);
+        next: (response: any) => {
+          localStorage.setItem(TOKEN_KEY, response.token);
+          console.log(response);
+          console.log(localStorage);
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {

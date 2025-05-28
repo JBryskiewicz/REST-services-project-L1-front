@@ -9,7 +9,7 @@ import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {BackendConnectorService} from './services/backend-connectors/backend-connector.service';
 import {RequestUtilsService} from './services/backend-connectors/request-utils.service';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { DashboardComponent } from './components/application/dashboard/dashboard.component';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelect} from '@angular/material/select';
@@ -24,6 +24,7 @@ import {
   MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
   MatTable
 } from '@angular/material/table';
+import {JwtInterceptor} from './services/auth-services/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,11 @@ import {
   providers: [
     BackendConnectorService,
     RequestUtilsService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

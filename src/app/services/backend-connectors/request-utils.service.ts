@@ -14,7 +14,6 @@ export class RequestUtilsService {
       return this.http.get<T>(`${this.API_URL}/${endpoint}/${pseudoParams}`, { withCredentials: true });
     }
     return this.http.get<T>(`${this.API_URL}/${endpoint}`, { withCredentials: true });
-
   }
 
   post<T, B = any>(endpoint: string, body: B): Observable<T> {
