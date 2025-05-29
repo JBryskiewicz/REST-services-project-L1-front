@@ -1,12 +1,12 @@
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { UserDestinationViewsDialogComponent } from './components/application/dashboard/user-destination-views-dialog/user-destination-views-dialog.component';
 import { AppComponent } from './app.component';
 import {AppRoutingModule} from './routing/app-routing.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
-import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatButton, MatIconButton, MatButtonModule} from '@angular/material/button';
 import {BackendConnectorService} from './services/backend-connectors/backend-connector.service';
 import {RequestUtilsService} from './services/backend-connectors/request-utils.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
@@ -24,7 +24,9 @@ import {
   MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
   MatTable
 } from '@angular/material/table';
+import {MatDialogModule} from '@angular/material/dialog';
 import {JwtInterceptor} from './services/auth-services/jwt.interceptor';
+import {MatListModule} from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -59,6 +61,10 @@ import {JwtInterceptor} from './services/auth-services/jwt.interceptor';
     MatRowDef,
     MatHeaderRowDef,
     MatIconButton,
+    MatDialogModule,
+    MatListModule,
+    MatButtonModule,
+    UserDestinationViewsDialogComponent
   ],
   providers: [
     BackendConnectorService,

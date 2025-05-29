@@ -3,8 +3,11 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {BackendConnectorService} from '../../../services/backend-connectors/backend-connector.service';
 import {take} from 'rxjs';
 import {Destination} from '../../../domain/appDestination.type';
+import {UserDestinationView} from '../../../domain/appDestination.type';
+import {UserDestinationViewsDialogComponent} from './user-destination-views-dialog/user-destination-views-dialog.component';
 import {TOKEN_KEY} from '../../landing-page/landing-page.component';
 import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'dashboard',
@@ -43,7 +46,7 @@ export class DashboardComponent {
 
   protected userDestinationList: Destination[] = [];
 
-  constructor(private backend: BackendConnectorService, private router: Router,) {
+  constructor(private backend: BackendConnectorService, private router: Router, private dialog: MatDialog,) {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
       this.isLoggedIn = true;
@@ -99,11 +102,53 @@ export class DashboardComponent {
   }
 
   protected saveCurrentView(): void {
-    const data = {userId: '', destinations: this.userDestinationList}
-    // Request to backend.
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const username = payload.sub;
+
+    const data = {
+      username,
+      destinations: this.userDestinationList
+    };
+
+    this.backend.saveUserDestinations(data)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          console.log('Destinations saved successfully');
+        },
+        error: (err) => {
+          console.error('Saving destinations failed:', err);
+        }
+      });
   }
 
   protected loadView(): void {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const username = payload.sub;
+
+    this.backend.getUserDestinationViews(username).pipe(take(1)).subscribe({
+      next: (views) => {
+        const dialogRef = this.dialog.open(UserDestinationViewsDialogComponent, {
+          data: views,
+          width: '600px'
+        });
+
+        dialogRef.afterClosed().subscribe((selectedView: UserDestinationView | null) => {
+          if (selectedView) {
+            this.userDestinationList = selectedView.destinations;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Failed to fetch user destination views', err);
+      }
+    });
     // open mat-dialog with list to pick from
     // in dialog send request for user's "destinations"
     // display them

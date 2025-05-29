@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Saved Views</h2>
+
+<div mat-dialog-content>
+  <div *ngIf="data.views.length === 0">
+    <p>No saved views available.</p>
+  </div>
+
+  <mat-list *ngIf="data.views.length > 0">
+    <mat-list-item *ngFor="let view of data.views">
+      <div class="view-item">
+        <strong>{{ view.destinations.length }} destinations</strong>
+        <span class="actions">
+          <button mat-button color="primary" (click)="loadView(view)">Load</button>
+          <button mat-button color="warn" (click)="deleteView(view)">Delete</button>
+        </span>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</div>

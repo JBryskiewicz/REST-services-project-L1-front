@@ -12,5 +12,6 @@ export interface Destination {
 }
 
 export interface UserDestinationView {
-  // implement
+  userId: string;
+  destinations: Destination[];
 }
