@@ -26,7 +26,12 @@ export class BackendConnectorService {
     return this.requestUtils.get<any>(this.APP_CONTROLLER, `getLocationData/${search}/${countryID}`);
   }
 
+  public getAllForUser(userId: string): Observable<any> {
+    return this.requestUtils.get<any>(this.APP_CONTROLLER, `getAllForUser/${userId}`);
+  }
+
   //save -> post (body)
+  //edit -> put
   //load -> get
   //delete -> delete
 

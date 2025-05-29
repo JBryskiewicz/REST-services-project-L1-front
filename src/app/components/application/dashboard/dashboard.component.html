@@ -2,7 +2,7 @@
 
   <header style="display: flex; justify-content: flex-end; gap: 12px; margin: 16px 16px 0 16px">
     <button mat-raised-button color="primary" (click)="saveCurrentView()">Save current view</button>
-    <button mat-raised-button color="primary" (click)="saveCurrentView()">Load view</button>
+    <button mat-raised-button color="primary" [disabled]="!areViewsLoaded" (click)="loadView()">Load view</button>
     <button mat-raised-button color="primary" (click)="handleLogOut()">Logout</button>
   </header>
 

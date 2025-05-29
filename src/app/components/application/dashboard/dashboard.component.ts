@@ -13,12 +13,15 @@ import {Router} from '@angular/router';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+
+  protected isLoggedIn: boolean = false;
+
+  protected areViewsLoaded: boolean = false;
+
   protected searchForm = new FormGroup({
     search: new FormControl(''),
     country: new FormControl(''),
   });
-
-  protected isLoggedIn: boolean = false;
 
   protected countryIDs = [
     {id: 'gb', name: 'Great Britain'},
@@ -47,6 +50,15 @@ export class DashboardComponent {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
       this.isLoggedIn = true;
+    }
+    const userId = localStorage.getItem(USER_ID);
+    if (userId) {
+      this.backend.getAllForUser(userId)
+        .pipe(take(1))
+        .subscribe(response => {
+          this.userDestinationList = response;
+          this.areViewsLoaded = true;
+        });
     }
   }
 
