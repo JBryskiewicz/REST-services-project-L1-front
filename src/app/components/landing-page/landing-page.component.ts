@@ -12,6 +12,7 @@ const INIT_FORM = {
 }
 
 export const TOKEN_KEY = 'jwtToken';
+export const USER_ID = 'REST-user-id';
 
 @Component({
   selector: 'app-landing-page',
@@ -50,7 +51,7 @@ export class LandingPageComponent {
       .subscribe({
         next: (response: any) => {
           localStorage.setItem(TOKEN_KEY, response.token);
-          console.log(response);
+          localStorage.setItem(USER_ID, response.userId);
           console.log(localStorage);
           this.router.navigate(['/dashboard']);
         },

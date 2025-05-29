@@ -3,7 +3,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {BackendConnectorService} from '../../../services/backend-connectors/backend-connector.service';
 import {take} from 'rxjs';
 import {Destination} from '../../../domain/appDestination.type';
-import {TOKEN_KEY} from '../../landing-page/landing-page.component';
+import {TOKEN_KEY, USER_ID} from '../../landing-page/landing-page.component';
 import {Router} from '@angular/router';
 
 @Component({
@@ -95,19 +95,28 @@ export class DashboardComponent {
 
   protected handleLogOut(): void {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_ID);
     this.router.navigate(['']);
   }
 
   protected saveCurrentView(): void {
-    const data = {userId: '', destinations: this.userDestinationList}
-    // Request to backend.
+    // open mat-dialog with one input text
+    // result of that dialog goes to viewName field in const data.
+    const data = {
+      userId: localStorage.getItem(USER_ID), // good enough...
+      viewName: '',
+      destinations: this.userDestinationList
+    }
+    console.log(data);
+    // Request to backend here.
   }
 
   protected loadView(): void {
     // open mat-dialog with list to pick from
     // in dialog send request for user's "destinations"
     // display them
-    // add for each button "load" & "delete"
+    // add for each button "load", "edit" & "delete"
+    // (important), edit should call separate request for PUT, instead of POST. (solution to PUT requirement).
     // on click close dialog and display data from selected view
     // this.userDestinationList = what was loaded from dialog.
   }
