@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {AppUser} from '../../domain/appUser.type';
 import {Observable} from 'rxjs';
 import {RequestUtilsService} from './request-utils.service';
+import {Destination} from '../../domain/appDestination.type';
+import {UserDestinationView} from '../../domain/appDestination.type';
 
 @Injectable()
 export class BackendConnectorService {
@@ -28,6 +30,30 @@ export class BackendConnectorService {
 
   public getAllForUser(userId: string): Observable<any> {
     return this.requestUtils.get<any>(this.APP_CONTROLLER, `getAllForUser/${userId}`);
+  }
+
+  public saveUserDestinationView(data: {
+    userId: string | null;
+    viewName: string;
+    destinations: Destination[];
+  }): Observable<void> {
+    return this.requestUtils.post<void>(`${this.USER_CONTROLLER}/views`, data);
+  }
+
+  public getUserDestinationViews(userId: string): Observable<UserDestinationView[]> {
+    return this.requestUtils.get<UserDestinationView[]>(this.APP_CONTROLLER, `getAllForUser/${userId}`);
+  }
+
+  public getSingleUserView(viewId: string): Observable<UserDestinationView> {
+    return this.requestUtils.get<UserDestinationView>(this.APP_CONTROLLER, `getUserView/${viewId}`);
+  }
+
+  public editUserDestinationView(data: UserDestinationView): Observable<UserDestinationView> {
+    return this.requestUtils.put<UserDestinationView>(`${this.APP_CONTROLLER}/editView`, data);
+  }
+
+  public deleteUserDestinationView(viewId: number): Observable<void> {
+    return this.requestUtils.delete<void>(`${this.APP_CONTROLLER}/deleteUserView/${viewId}`);
   }
 
   //save -> post (body)

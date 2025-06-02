@@ -24,13 +24,20 @@ import {
   MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
   MatTable
 } from '@angular/material/table';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
 import {JwtInterceptor} from './services/auth-services/jwt.interceptor';
+import {SaveViewDialogComponent} from './components/application/dashboard/save-view-dialog/save-view-dialog.component';
+import {LoadViewDialogComponent} from './shared/load-view-dialog/load-view-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingPageComponent,
-    DashboardComponent
+    DashboardComponent,
+    LoadViewDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +66,11 @@ import {JwtInterceptor} from './services/auth-services/jwt.interceptor';
     MatRowDef,
     MatHeaderRowDef,
     MatIconButton,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatListModule,
+    SaveViewDialogComponent,
   ],
   providers: [
     BackendConnectorService,
