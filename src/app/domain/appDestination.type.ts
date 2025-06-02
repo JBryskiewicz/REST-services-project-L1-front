@@ -15,5 +15,6 @@ export interface UserDestinationView {
   id?: number;
   userId: number;
   viewName: string;
-  destinations: Destination[];
+  // destinations: Destination[];
+  regionInfo: string;
 }

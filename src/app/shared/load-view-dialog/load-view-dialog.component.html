@@ -1,17 +1,29 @@
-<h2 mat-dialog-title>Wczytaj zapisany widok</h2>
+<h2 mat-dialog-title>Load saved view</h2>
 <mat-dialog-content>
-  <div *ngIf="userViews.length === 0">Brak zapisanych widoków.</div>
+  <div *ngIf="userViews.length === 0">No saved views</div>
   <mat-list *ngIf="userViews.length > 0">
-    <mat-list-item *ngFor="let view of userViews">
-      <div style="flex: 1;">
-        <strong>{{ view.viewName }}</strong>
+<!--    <mat-list-item *ngFor="let view of userViews" class="view-item">-->
+<!--      <div class="view-name">-->
+<!--        <strong>{{ view.viewName }}</strong>-->
+<!--      </div>-->
+<!--      <button mat-button color="primary" (click)="loadView(view)">Load</button>-->
+<!--      <button mat-button color="accent" (click)="editView(view)">Edit</button>-->
+<!--      <button mat-button color="warn" (click)="deleteView(view.id!)">Delete</button>-->
+<!--    </mat-list-item>-->
+    <mat-list-item *ngFor="let view of userViews" class="view-item">
+      <div class="view-item-content">
+        <div class="view-name">
+          <strong>{{ view.viewName }}</strong>
+        </div>
+        <div class="buttons">
+          <button mat-button color="primary" (click)="loadView(view)">Load</button>
+          <button mat-button color="accent" (click)="editView(view)">Edit</button>
+          <button mat-button color="warn" (click)="deleteView(view.id!)">Delete</button>
+        </div>
       </div>
-      <button mat-button color="primary" (click)="loadView(view)">Załaduj</button>
-      <button mat-button color="accent" (click)="editView(view)">Edytuj</button>
-      <button mat-button color="warn" (click)="deleteView(view.id!)">Usuń</button>
     </mat-list-item>
   </mat-list>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Zamknij</button>
+  <button mat-button (click)="cancel()">Close</button>
 </mat-dialog-actions>

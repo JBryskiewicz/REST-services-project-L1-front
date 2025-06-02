@@ -1,0 +1,19 @@
+.view-item-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.view-name {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px; /* odstępy między przyciskami */
+  flex-shrink: 0; /* przyciski nie kurczą się */
+}

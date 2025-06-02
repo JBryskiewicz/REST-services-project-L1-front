@@ -26,6 +26,12 @@ export class SaveViewDialogComponent {
     private dialogRef: MatDialogRef<SaveViewDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { initialValue?: string }
   ) {}
+  
+  ngOnInit(): void {
+    if (this.data.initialValue) {
+      this.form.patchValue({ viewName: this.data.initialValue });
+    }
+  }
 
   save(): void {
     if (this.form.valid) {

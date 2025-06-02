@@ -115,19 +115,21 @@ export class DashboardComponent {
   }
 
   protected saveCurrentView(): void {
-    // open mat-dialog with one input text
-    // result of that dialog goes to viewName field in const data.
+    const userId = localStorage.getItem(USER_ID);
+    if (!userId || this.userDestinationList.length === 0) return;
+
     const dialogRef = this.dialog.open(SaveViewDialogComponent, {
-      width: '400px'
+      width: '400px',
+      data: {initialValue: ''}
     });
 
     dialogRef.afterClosed().pipe(take(1)).subscribe((viewName: string | null) => {
       if (viewName) {
-    const data = {
-      userId: localStorage.getItem(USER_ID), // good enough...
-      viewName: '',
-      destinations: this.userDestinationList
-    };
+      const data = {
+        userId,
+        viewName: viewName,
+        regionInfo: JSON.stringify(this.userDestinationList)
+      };
 
     this.backend.saveUserDestinationView(data)
           .pipe(take(1))
@@ -140,22 +142,15 @@ export class DashboardComponent {
   }
 
   protected loadView(): void {
-    // open mat-dialog with list to pick from
-    // in dialog send request for user's "destinations"
-    // display them
-    // add for each button "load", "edit" & "delete"
-    // (important), edit should call separate request for PUT, instead of POST. (solution to PUT requirement).
-    // on click close dialog and display data from selected view
-    // this.userDestinationList = what was loaded from dialog.
     const userId = localStorage.getItem(USER_ID);
     if (!userId) return;
 
     const dialogRef = this.dialog.open(LoadViewDialogComponent, {
       width: '600px',
-      data: { userId }
+      data: { userId, currentDestinations: this.userDestinationList }
     });
 
-    dialogRef.afterClosed().subscribe((destinations) => {
+    dialogRef.afterClosed().pipe(take(1)).subscribe((destinations) => {
       if (destinations) {
         this.userDestinationList = destinations;
       }

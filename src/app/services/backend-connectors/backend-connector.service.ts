@@ -35,9 +35,10 @@ export class BackendConnectorService {
   public saveUserDestinationView(data: {
     userId: string | null;
     viewName: string;
-    destinations: Destination[];
+    // destinations?: Destination[];
+    regionInfo: string;
   }): Observable<void> {
-    return this.requestUtils.post<void>(`${this.USER_CONTROLLER}/views`, data);
+    return this.requestUtils.post<void>(`${this.APP_CONTROLLER}/saveView`, data);
   }
 
   public getUserDestinationViews(userId: string): Observable<UserDestinationView[]> {
@@ -52,8 +53,8 @@ export class BackendConnectorService {
     return this.requestUtils.put<UserDestinationView>(`${this.APP_CONTROLLER}/editView`, data);
   }
 
-  public deleteUserDestinationView(viewId: number): Observable<void> {
-    return this.requestUtils.delete<void>(`${this.APP_CONTROLLER}/deleteUserView/${viewId}`);
+  public deleteUserDestinationView(id: number): Observable<void> {
+    return this.requestUtils.delete<void>(`${this.APP_CONTROLLER}/deleteUserView/${id}`);
   }
 
   //save -> post (body)
