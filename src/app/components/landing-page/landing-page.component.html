@@ -34,7 +34,9 @@
         </mat-form-field>
       </form>
     </div>
-
+    <div *ngIf="errorMessage" style="margin-bottom: 16px;">
+      <span style="color: darkred">{{ errorMessage }}</span>
+    </div>
     <div class="login-view__form-buttons">
       <button mat-button color="primary" (click)="switchLoginMode();">
         {{ isLoginMode ? 'Sign up instead' : 'Log in instead' }}

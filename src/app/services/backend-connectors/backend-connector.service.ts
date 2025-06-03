@@ -15,6 +15,10 @@ export class BackendConnectorService {
   constructor(private requestUtils: RequestUtilsService) {
   }
 
+  public check(): Observable<any> {
+    return this.requestUtils.get(this.APP_CONTROLLER, 'check');
+  }
+
   public registerAppUser(user: AppUser): Observable<any> {
     return this.requestUtils.post(`${this.USER_CONTROLLER}/register`, user);
   }

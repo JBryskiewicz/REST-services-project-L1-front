@@ -1,10 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { BackendConnectorService } from '../../services/backend-connectors/backend-connector.service';
-import { UserDestinationView } from '../../domain/appDestination.type';
-import { SaveViewDialogComponent } from '../../components/application/dashboard/save-view-dialog/save-view-dialog.component';
-import { take } from 'rxjs';
-import { Destination } from '../../domain/appDestination.type';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from '@angular/material/dialog';
+import {BackendConnectorService} from '../../services/backend-connectors/backend-connector.service';
+import {UserDestinationView} from '../../domain/appDestination.type';
+import {
+  SaveViewDialogComponent
+} from '../../components/application/dashboard/save-view-dialog/save-view-dialog.component';
+import {take, tap} from 'rxjs';
+import {Destination} from '../../domain/appDestination.type';
 
 @Component({
   selector: 'app-load-view-dialog',
@@ -16,6 +18,8 @@ export class LoadViewDialogComponent implements OnInit {
   userViews: UserDestinationView[] = [];
   userId: string;
   currentDestinations: Destination[] = [];
+
+  errorMessage: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<LoadViewDialogComponent>,
@@ -30,18 +34,32 @@ export class LoadViewDialogComponent implements OnInit {
   ngOnInit(): void {
 
     this.backend.getAllForUser(this.userId)
-      .pipe(take(1))
-      .subscribe(views => this.userViews = views);
+      .pipe(
+        take(1),
+        tap(() => this.errorMessage = ''),
+      )
+      .subscribe({
+        next: (views) => {
+          this.userViews = views
+        }, error: (error) => {
+          switch (error.status) {
+            case 403:
+              this.errorMessage = `${error.status}: Bad request, cannot find items.`
+              break;
+            case 404:
+              this.errorMessage = `${error.status}: Cannot find items.`
+              break;
+          }
+        }
+      });
   }
 
   loadView(view: UserDestinationView): void {
-    console.log('Loaded view:', view);
     let destinations;
     if (view.regionInfo) {
       try {
         destinations = JSON.parse(view.regionInfo);
       } catch (e) {
-        console.error('Unable to parse regionInfo', e);
         destinations = [];
       }
     } else {
@@ -51,21 +69,28 @@ export class LoadViewDialogComponent implements OnInit {
   }
 
   deleteView(viewId: number): void {
-    console.log('DELETE clicked for ID:', viewId);
     if (!viewId) {
-      console.error('viewId invalid or undefined');
       return;
     }
 
     this.backend.deleteUserDestinationView(viewId)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        tap(() => this.errorMessage = ''),
+      )
       .subscribe({
         next: () => {
-          console.log('View deleted:', viewId);
           this.userViews = this.userViews.filter(v => v.id !== viewId);
         },
-          error: (err) => {
-          console.error('Error when deleting:', err);
+        error: (error) => {
+          switch (error.status) {
+            case 403:
+              this.errorMessage = `${error.status}: Bad request, cannot delete.`
+              break;
+            case 404:
+              this.errorMessage = `${error.status}: cannot delete, item missing.`
+              break;
+          }
         }
       });
   }
@@ -73,17 +98,31 @@ export class LoadViewDialogComponent implements OnInit {
   editView(view: UserDestinationView): void {
     const dialogRef = this.dialog.open(SaveViewDialogComponent, {
       width: '400px',
-      data: { initialValue: view.viewName }
+      data: {initialValue: view.viewName}
     });
 
     dialogRef.afterClosed().pipe(take(1)).subscribe((newViewName: string | null) => {
       if (newViewName) {
-        const updatedView = { ...view, viewName: newViewName, regionInfo: JSON.stringify(this.currentDestinations) };
-        console.log('Sending to update:', updatedView);
+        const updatedView = {...view, viewName: newViewName, regionInfo: JSON.stringify(this.currentDestinations)};
         this.backend.editUserDestinationView(updatedView)
-          .pipe(take(1))
-          .subscribe(updated => {
-            this.userViews = this.userViews.map(v => v.id === updated.id ? updated : v);
+          .pipe(
+            take(1),
+            tap(() => this.errorMessage = ''),
+          )
+          .subscribe({
+            next: (updated) => {
+              this.userViews = this.userViews.map(v => v.id === updated.id ? updated : v);
+            },
+            error: (error) => {
+              switch (error.status) {
+                case 403:
+                  this.errorMessage = `${error.status}: Bad request, cannot update.`
+                  break;
+                case 404:
+                  this.errorMessage = `${error.status}: cannot edit, item missing.`
+                  break;
+              }
+            }
           });
       }
     });

@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {FormBuilder, UntypedFormGroup} from '@angular/forms';
 import {BackendConnectorService} from '../../services/backend-connectors/backend-connector.service';
 import {AppUser} from '../../domain/appUser.type';
-import {take} from 'rxjs';
+import {take, tap} from 'rxjs';
 import {Router} from '@angular/router';
 
 const INIT_FORM = {
@@ -26,6 +26,8 @@ export class LandingPageComponent {
 
   protected isLoginMode: boolean = true;
 
+  protected errorMessage: string = '';
+
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -47,17 +49,25 @@ export class LandingPageComponent {
   private loginAction(): void {
     const {email, username, password} = this.loginForm.value;
     this.backendConnector.loginAppUser({email, username, password} as AppUser)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        tap(() => this.errorMessage = ''),
+      )
       .subscribe({
         next: (response: any) => {
           localStorage.setItem(TOKEN_KEY, response.token);
           localStorage.setItem(USER_ID, response.userId);
-          console.log(localStorage);
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          console.error('Login failed', error);
-          // temp code, should add remove from storage if token expired.
+          switch (error.status) {
+            case 400:
+              this.errorMessage = `${error.status}: Bad request, application request error.`
+              break;
+            case 401:
+              this.errorMessage = `${error.status}: Failed to authorize user.`
+              break;
+          }
         }
       });
   }
@@ -65,9 +75,21 @@ export class LandingPageComponent {
   private registerAction(): void {
     const {email, username, password} = this.loginForm.value;
     this.backendConnector.registerAppUser({email, username, password} as AppUser)
-      .pipe(take(1))
-      .subscribe(() => {
-        this.isLoginMode = true;
-      })
+      .pipe(
+        take(1),
+        tap(() => this.errorMessage = ''),
+      )
+      .subscribe({
+        next: () => {
+          this.isLoginMode = true;
+        },
+        error: (error) => {
+          switch (error.status) {
+            case 400:
+              this.errorMessage = `${error.status}: Failed to register.`;
+              break;
+          }
+        }
+      });
   }
 }

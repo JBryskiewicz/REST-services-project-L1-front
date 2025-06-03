@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatDialogModule
   ]
 })
-export class SaveViewDialogComponent {
+export class SaveViewDialogComponent implements OnInit {
   form = new FormGroup({
     viewName: new FormControl('', Validators.required)
   });
@@ -26,7 +26,7 @@ export class SaveViewDialogComponent {
     private dialogRef: MatDialogRef<SaveViewDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { initialValue?: string }
   ) {}
-  
+
   ngOnInit(): void {
     if (this.data.initialValue) {
       this.form.patchValue({ viewName: this.data.initialValue });

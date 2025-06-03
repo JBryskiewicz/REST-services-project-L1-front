@@ -1,15 +1,18 @@
 <ng-container *ngIf="isLoggedIn; else notLoggedIn">
 
-  <header style="display: flex; justify-content: flex-end; gap: 12px; margin: 16px 16px 0 16px">
-    <button mat-raised-button color="primary" (click)="saveCurrentView()">Save current view</button>
-    <button mat-raised-button color="primary" [disabled]="!areViewsLoaded" (click)="loadView()">Load view</button>
-    <button mat-raised-button color="primary" (click)="handleLogOut()">Logout</button>
+  <header style="display: flex; justify-content: space-between; gap: 12px; margin: 16px 16px 0 16px">
+    <div><span *ngIf="errorMessage" style="color: darkred">{{ errorMessage }}</span></div>
+    <div style="display: flex; justify-content: flex-end; gap: 12px;">
+      <button mat-raised-button color="primary" (click)="saveCurrentView()">Save current view</button>
+      <button mat-raised-button color="primary" [disabled]="!areViewsLoaded" (click)="loadView()">Load view</button>
+      <button mat-raised-button color="primary" (click)="handleLogOut()">Logout</button>
+    </div>
   </header>
 
   <main class="rest-app">
     <section class="rest-app__data-container">
 
-      <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="rest-app__data-container__search">
+      <form [formGroup]="searchForm" class="rest-app__data-container__search">
 
         <mat-form-field appearance="fill">
           <mat-label>Country</mat-label>
@@ -26,7 +29,7 @@
         </mat-form-field>
 
 
-        <button type="submit" mat-raised-button color="primary">
+        <button (click)="onSubmit()" mat-raised-button color="primary">
           <mat-icon>search</mat-icon>
           <span>search</span>
         </button>
@@ -131,5 +134,9 @@
 </ng-container>
 
 <ng-template #notLoggedIn>
-  Not logged-in, please login: <a href="/login">login page</a>
+  <div>
+    <span style="color: darkred" *ngIf="errorMessage">{{ errorMessage }}</span>
+    <p>Please Log-in here: <a href="/login">login page</a></p>
+
+  </div>
 </ng-template>

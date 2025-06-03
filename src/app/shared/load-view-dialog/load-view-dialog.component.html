@@ -1,4 +1,5 @@
 <h2 mat-dialog-title>Load saved view</h2>
+<div *ngIf="errorMessage"><span style="color: darkred">{{ errorMessage }}</span></div>
 <mat-dialog-content>
   <div *ngIf="userViews.length === 0">No saved views</div>
   <mat-list *ngIf="userViews.length > 0">

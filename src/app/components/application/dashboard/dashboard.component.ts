@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {BackendConnectorService} from '../../../services/backend-connectors/backend-connector.service';
-import {take} from 'rxjs';
+import {take, tap} from 'rxjs';
 import {Destination} from '../../../domain/appDestination.type';
 import {TOKEN_KEY, USER_ID} from '../../landing-page/landing-page.component';
 import {Router} from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { SaveViewDialogComponent } from './save-view-dialog/save-view-dialog.component';
-import { LoadViewDialogComponent } from '../../../../app/shared/load-view-dialog/load-view-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {SaveViewDialogComponent} from './save-view-dialog/save-view-dialog.component';
+import {LoadViewDialogComponent} from '../../../../app/shared/load-view-dialog/load-view-dialog.component';
 
 @Component({
   selector: 'dashboard',
@@ -20,6 +20,8 @@ export class DashboardComponent {
   protected isLoggedIn: boolean = false;
 
   protected areViewsLoaded: boolean = false;
+
+  errorMessage: string = '';
 
   protected searchForm = new FormGroup({
     search: new FormControl(''),
@@ -50,24 +52,23 @@ export class DashboardComponent {
   protected userDestinationList: Destination[] = [];
 
   constructor(private backend: BackendConnectorService, private router: Router, private dialog: MatDialog) {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      this.isLoggedIn = true;
-    }
-    const userId = localStorage.getItem(USER_ID);
-    if (userId) {
-      this.backend.getAllForUser(userId)
-        .pipe(take(1))
-        .subscribe(response => {
-          this.userDestinationList = response;
-          this.areViewsLoaded = true;
-        });
-    }
+    this.backend.check().pipe(take(1)).subscribe({
+      next: () => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (token) {
+          this.isLoggedIn = true;
+        }
+      }, error: (error) => {
+        this.errorMessage = `Error ${error.status}: User not logged in!`;
+      }
+    })
+
   }
 
   protected onSubmit(): void {
     const searchValue = this.searchForm.value.search;
     const countryValue = this.searchForm.value.country;
+    console.log('submit');
     if (!searchValue || searchValue === '') {
       return;
     }
@@ -75,11 +76,26 @@ export class DashboardComponent {
       return;
     }
 
+
     this.backend.getSearchResult(searchValue.toLowerCase(), countryValue.toLowerCase())
-      .pipe(take(1))
-      .subscribe(response => {
-        this.searchResult = this.parseResponse(response);
-        console.log(this.searchResult);
+      .pipe(
+        take(1),
+        tap(() => this.errorMessage = ''),
+      )
+      .subscribe({
+        next: (response) => {
+          this.searchResult = this.parseResponse(response);
+        },
+        error: (error) => {
+          switch (error.status) {
+            case 403:
+              this.errorMessage = `${error.status}: Forbidden action, location doesn't exist.`
+              break;
+            case 404:
+              this.errorMessage = `${error.status}: Cannot find location.`
+              break;
+          }
+        }
       });
   }
 
@@ -125,13 +141,13 @@ export class DashboardComponent {
 
     dialogRef.afterClosed().pipe(take(1)).subscribe((viewName: string | null) => {
       if (viewName) {
-      const data = {
-        userId,
-        viewName: viewName,
-        regionInfo: JSON.stringify(this.userDestinationList)
-      };
+        const data = {
+          userId,
+          viewName: viewName,
+          regionInfo: JSON.stringify(this.userDestinationList)
+        };
 
-    this.backend.saveUserDestinationView(data)
+        this.backend.saveUserDestinationView(data)
           .pipe(take(1))
           .subscribe({
             next: () => console.log('View saved successfully'),
@@ -147,7 +163,7 @@ export class DashboardComponent {
 
     const dialogRef = this.dialog.open(LoadViewDialogComponent, {
       width: '600px',
-      data: { userId, currentDestinations: this.userDestinationList }
+      data: {userId, currentDestinations: this.userDestinationList}
     });
 
     dialogRef.afterClosed().pipe(take(1)).subscribe((destinations) => {
