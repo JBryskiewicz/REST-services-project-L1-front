@@ -4,7 +4,7 @@
     <div><span *ngIf="errorMessage" style="color: darkred">{{ errorMessage }}</span></div>
     <div style="display: flex; justify-content: flex-end; gap: 12px;">
       <button mat-raised-button color="primary" (click)="saveCurrentView()">Save current view</button>
-      <button mat-raised-button color="primary" [disabled]="!areViewsLoaded" (click)="loadView()">Load view</button>
+      <button mat-raised-button color="primary" (click)="loadView()">Load view</button>
       <button mat-raised-button color="primary" (click)="handleLogOut()">Logout</button>
     </div>
   </header>

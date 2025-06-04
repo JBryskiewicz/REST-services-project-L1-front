@@ -68,14 +68,13 @@ export class DashboardComponent {
   protected onSubmit(): void {
     const searchValue = this.searchForm.value.search;
     const countryValue = this.searchForm.value.country;
-    console.log('submit');
+
     if (!searchValue || searchValue === '') {
       return;
     }
     if (!countryValue || countryValue === '') {
       return;
     }
-
 
     this.backend.getSearchResult(searchValue.toLowerCase(), countryValue.toLowerCase())
       .pipe(
