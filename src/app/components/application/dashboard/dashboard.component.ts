@@ -70,9 +70,11 @@ export class DashboardComponent {
     const countryValue = this.searchForm.value.country;
 
     if (!searchValue || searchValue === '') {
+      this.errorMessage = "Internal Error: Choose country and / or city";
       return;
     }
     if (!countryValue || countryValue === '') {
+      this.errorMessage = "Internal Error: Choose country and / or city";
       return;
     }
 
@@ -94,6 +96,7 @@ export class DashboardComponent {
               this.errorMessage = `${error.status}: Cannot find location.`
               break;
           }
+          console.log(this.errorMessage);
         }
       });
   }
